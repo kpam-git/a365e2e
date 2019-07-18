@@ -1,65 +1,76 @@
-const { SpecReporter } = require('jasmine-spec-reporter');
+// Protractor configuration file, see link for more information
+// https://github.com/angular/protractor/blob/master/lib/config.ts
 
-let Login_password = process.env.A365e2etest_password;
+const {
+  SpecReporter
+} = require('jasmine-spec-reporter');
 
 exports.config = {
-    allScriptsTimeout: 10*1000,
-    specs: [
-        './e2e/SelectArcadiaInstance/selectArcadia.spec.ts',
-        './e2e/Notebook/notebook.spec.ts',
-        './e2e/SqlScripts/sqlScripts.spec.ts',
-        './e2e/SqlCompute/sqlCompute.spec.ts'
-    ],
-    seleniumAddress: 'http://localhost:4444/wd/hub',
-    capabilities: {
-        'browserName': 'MicrosoftEdge',
-        elementScrollBehavior: 1,
-        nativeEvents: false 
+  allScriptsTimeout: 10000,
+  specs: [
+      './e2e/**/*.spec.ts'
+  ],
+
+  // seleniumAddress: 'http://localhost:4444/wd/hub',
+  capabilities: {
+      browserName: 'MicrosoftEdge',
+      elementScrollBehavior: 1,
+      nativeEvents: false
+  },
+  directConnect: false,
+  baseUrl: 'https://web-ci.projectarcadia.net/', // change baseUrl to test on other sites
+  framework: 'jasmine',
+  jasmineNodeOpts: {
+      showColors: true,
+      defaultTimeoutInterval: 200000,
+      print: function () {}
+  },
+  params: {
+    login: {
+      email: 'a365-e2e@microsoft.com',
+      password: ''
     },
-    directConnect: false,
-    framework: 'jasmine',
-    jasmineNodeOpts: {
-        showColors: true,
-        defaultTimeoutInterval: 60*1000,
-        print: function () { }
-    },
-    params: {
-        login: {
-            email: 'a365-e2e@microsoft.com',
-            password: ''
+  },
+  plugins: [{
+    package: 'jasmine2-protractor-utils',
+    disableHTMLReport: false,
+    htmlReportDir: './e2e/testResult/htmlReports/',
+    disableScreenshot: false,
+    screenshotOnExpectFailure: true,
+    screenshotOnSpecFailure: true,
+    screenshotPath: './e2e/testResult/screenshots/'
+  }],
+  onPrepare() {
+      // making the browser window large enough that it shouldn't effect tests
+      // commented this line temporarily because remote computer cannot get window size.
+      // browser.manage().window().setSize(1920, 1200);
+
+       // import sub-config
+    require('ts-node').register({
+        project: 'e2e/tsconfig.e2e.json'
+    });
+    //real time console spec reporter for jasmine testing framework.
+    jasmine.getEnv().addReporter(new SpecReporter({
+        spec: {
+            displayStacktrace: true
         }
-    },
-    plugins: [{
-        package: 'jasmine2-protractor-utils',
-        disableHTMLReport: false,
-        htmlReportDir: './e2e/testResult/htmlReports/',
-        disableScreenshot: false,
-        screenshotOnExpectFailure: true,
-        screenshotOnSpecFailure: true,
-        screenshotPath: './e2e/testResult/screenshots/'
-    }],
-    onPrepare() {
-        // making the browser window large enough that it shouldn't effect tests
+    }));
 
-        require('ts-node').register({
-            project: 'e2e/tsconfig.e2e.json'
-        });
-        jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    //xml reporter
+    var jasmineReporters = require('jasmine-reporters');
+    jasmine.getEnv().addReporter(new jasmineReporters.JUnitXmlReporter({
+        consolidateAll: true,
+        savePath: './e2e/testResult/xmlReports',
+        filePrefix: 'e2e-xmloutput-chrome'
+    }));
 
-        var jasmineReporters = require('jasmine-reporters');
-        jasmine.getEnv().addReporter(new jasmineReporters.JUnitXmlReporter({
-            consolidateAll: true,
-            savePath: './e2e/testResult/xmlReports',
-            filePrefix: 'e2e-xmloutput-edge'
-        }));
-
-
-        // navigate to microsoft online login
-
-
-        browser.ignoreSynchronization = true;
-        browser.driver.get(browser.baseUrl);
+    browser.ignoreSynchronization = true;
+    browser.driver.get(browser.baseUrl);
+    browser.driver.wait(() => {
+        return browser.isElementPresent(by.id('i0116'));
+    }).then(() => {
         browser.driver.findElement(by.id('i0116')).sendKeys(browser.params.login.email).then(() => {
+            browser.driver.sleep(1000);
             // click sign in button
             browser.driver.findElement(by.id('idSIButton9')).click();
 
@@ -76,7 +87,7 @@ exports.config = {
                 browser.driver.findElement(by.css('#loginMessage > a')).click();
 
                 // send password
-                browser.driver.findElement(by.id('passwordInput')).sendKeys(Login_password);
+                browser.driver.findElement(by.id('passwordInput')).sendKeys(browser.params.login.password);
 
                 // click submit
                 browser.driver.findElement(by.id('submitButton')).click();
@@ -92,8 +103,9 @@ exports.config = {
             // User is already logged in. Do nothing.
             console.log("success");
         });
-    },
-    onComplete() {
-        browser.driver.quit();
-    }
+    })
+  },
+  onComplete() {
+    browser.driver.quit();
+  }
 };

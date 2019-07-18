@@ -6,10 +6,10 @@ let Login_password = process.env.A365e2etest_password;
 exports.config = {
     allScriptsTimeout: 10000,
 
-    seleniumAddress: 'http://localhost:4444/wd/hub',
+    // seleniumAddress: 'http://localhost:4444/wd/hub',
     multiCapabilities: [
         {
-            browserName: 'Chrome',
+            browserName: 'chrome',
             'chromeOptions': {
                 'args': ['--disable-web-security', 'user-agent=Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion']
             },
@@ -21,13 +21,14 @@ exports.config = {
             browserName: 'MicrosoftEdge',
             elementScrollBehavior: 1,
             nativeEvents: false,
+            version: '17.17134',
+            seleniumProtocol: 'WebDriver',
             specs: [
                 './e2e/**/*.spec.ts'
             ]
         }
     ],
-    directConnect: true,
-    useAllAngular2AppRoots: true,
+    directConnect: false,
 
     baseUrl: 'https://web-ci.projectarcadia.net', // change baseUrl to test on other sites
     framework: 'jasmine',

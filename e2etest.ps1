@@ -7,8 +7,8 @@ param
 
 # .\node_modules\.bin\protractor.cmd protractor.chrome.conf.js --baseUrl=$baseUrl --params.login.email=$email --params.login.password=$password
 
-Start-Process cmd.exe -ArgumentList "/C .\node_modules\.bin\webdriver-manager start --edge MicrosoftWebDriver.exe"
+Start-Process cmd.exe -ArgumentList "/C .\node_modules\.bin\webdriver-manager start --edge MicrosoftWebDriver_17.exe"
 
 Start-Sleep -s 5
 
-.\node_modules\.bin\protractor.cmd protractor.edge.conf.js --baseUrl=$baseUrl --params.login.email=$email --params.login.password=$password
+.\node_modules\.bin\protractor.cmd protractor.chrome_edge.conf.js --baseUrl=$baseUrl --params.login.email=$email --params.login.password=$password
