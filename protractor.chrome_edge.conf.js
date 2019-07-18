@@ -2,7 +2,13 @@ const {
     SpecReporter
 } = require('jasmine-spec-reporter');
 
-let Login_password = process.env.A365e2etest_password;
+// let Login_password = process.env.A365e2etest_password;
+const specs = [
+  './e2e/SelectArcadiaInstance/selectArcadia.spec.ts',
+    './e2e/Notebook/notebook.spec.ts',
+    './e2e/SqlScripts/sqlScripts.spec.ts',
+    './e2e/SqlCompute/sqlCompute.spec.ts'
+]
 exports.config = {
     allScriptsTimeout: 10000,
 
@@ -13,19 +19,13 @@ exports.config = {
             'chromeOptions': {
                 'args': ['--disable-web-security', 'user-agent=Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion']
             },
-            specs: [
-                './e2e/**/*.spec.ts'
-            ]
+            specs: specs
         },
         {
             browserName: 'MicrosoftEdge',
             elementScrollBehavior: 1,
             nativeEvents: false,
-            version: '17.17134',
-            seleniumProtocol: 'WebDriver',
-            specs: [
-                './e2e/**/*.spec.ts'
-            ]
+            specs: specs
         }
     ],
     directConnect: false,
@@ -66,13 +66,6 @@ exports.config = {
         //xml reporter
         var jasmineReporters = require('jasmine-reporters');
         browser.getCapabilities().then(function (caps) {
-            if (caps.get('browserName') === 'MicrosoftEdge') {
-                browser.params.browser = 'Edge';
-            } else {
-                // making the browser window large enough that it shouldn't effect tests
-                browser.manage().window().setSize(1920, 1200);
-            }
-
             jasmine.getEnv().addReporter(new jasmineReporters.JUnitXmlReporter({
                 consolidateAll: true,
                 savePath: './e2e/testResult/xmlReports',
@@ -100,7 +93,7 @@ exports.config = {
                 browser.driver.findElement(by.css('#loginMessage > a')).click();
 
                 // send password
-                browser.driver.findElement(by.id('passwordInput')).sendKeys(Login_password);
+                browser.driver.findElement(by.id('passwordInput')).sendKeys(browser.params.login.password);
 
                 // click submit
                 browser.driver.findElement(by.id('submitButton')).click();

@@ -2,7 +2,7 @@ param
 (
     [parameter(Mandatory = $false)] [String] $baseUrl='https://web-ci.projectarcadia.net/',
     [parameter(Mandatory = $false)] [String] $email='a365-e2e@microsoft.com',
-    [parameter(Mandatory = $false)] [String] $password
+    [parameter(Mandatory = $false)] [String] $password='4Uu34?:,x~ck[9GL'
 )
 
 # .\node_modules\.bin\protractor.cmd protractor.chrome.conf.js --baseUrl=$baseUrl --params.login.email=$email --params.login.password=$password
